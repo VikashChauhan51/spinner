@@ -31,5 +31,9 @@ public enum SpinnerTypes
     Ball,
     Plus,
     Crocodiles,
-    Circle
+    Circle,
+    WorkingDots,
+    WorkingCircle,
+    LoadingDots,
+    LoadingCircle
 }

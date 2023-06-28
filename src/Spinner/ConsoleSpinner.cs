@@ -1,7 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Resources;
-using System.Threading;
-using System.Xml.Linq;
 
 namespace Spinner;
 public class ConsoleSpinner
@@ -12,13 +9,11 @@ public class ConsoleSpinner
     private Spinner spinner;
     private int? time;
     private double? delay;
-    private Task? task;
-    private ValueTask? valueTask;
     private bool active = false;
     private ConsoleColor color;
     private readonly List<Spinner> spinners = new List<Spinner>();
     private readonly Stopwatch stopwatch = new Lazy<Stopwatch>(() => new Stopwatch()).Value;
-    private readonly static object objectLock = new();
+    private readonly object objectLock = new();
     private static readonly Lazy<ConsoleSpinner> DefaultSpinner = new Lazy<ConsoleSpinner>(
        () => new ConsoleSpinner());
 
@@ -27,29 +22,27 @@ public class ConsoleSpinner
         get { return DefaultSpinner.Value; }
     }
 
-    public ConsoleSpinner(SpinnerTypes spinnerType, ConsoleColor color, int? time, double? delay, Task? task, ValueTask? valueTask)
+    public ConsoleSpinner(SpinnerTypes spinnerType, ConsoleColor color, int? time, double? delay)
     {
         this.time = time;
         this.delay = delay;
-        this.task = task;
-        this.valueTask = valueTask;
         this.color = color;
         LoadSpinners();
         this.spinner = spinners.First(x => x.Name == spinnerType);
 
     }
 
-    public ConsoleSpinner() : this(SpinnerTypes.Dots2, ConsoleColor.White, DefaultTime, DefaultDelay, null, null)
+    public ConsoleSpinner() : this(SpinnerTypes.Circle, ConsoleColor.White, DefaultTime, DefaultDelay)
     {
 
     }
 
-    public ConsoleSpinner(SpinnerTypes spinnerType) : this(spinnerType, ConsoleColor.White, null, DefaultDelay, null, null)
+    public ConsoleSpinner(SpinnerTypes spinnerType) : this(spinnerType, ConsoleColor.White, DefaultTime, DefaultDelay)
     {
 
     }
 
-    public ConsoleSpinner(SpinnerTypes spinnerType, ConsoleColor color) : this(spinnerType, color, null, DefaultDelay, null, null)
+    public ConsoleSpinner(SpinnerTypes spinnerType, ConsoleColor color) : this(spinnerType, color, DefaultTime, DefaultDelay)
     {
 
     }
@@ -62,18 +55,6 @@ public class ConsoleSpinner
     public ConsoleSpinner SetTimeoutSeconds(int time)
     {
         this.time = time;
-        return this;
-    }
-
-    public ConsoleSpinner SetDoWork(Task task)
-    {
-        this.task = task;
-        return this;
-    }
-
-    public ConsoleSpinner SetDoWork(ValueTask task)
-    {
-        this.valueTask = task;
         return this;
     }
 
@@ -92,10 +73,14 @@ public class ConsoleSpinner
 
     public async Task Start()
     {
+        if (active)
+            return;
+
         bool cursorVisibility = OperatingSystem.IsWindows() ? Console.CursorVisible : true;
 
         try
         {
+
             active = true;
             int counter = -1;
 
@@ -105,10 +90,10 @@ public class ConsoleSpinner
                 Console.CursorVisible = false;
 
             Console.ForegroundColor = color;
-            while (!TaskCompleted() ?? active)
+            while (active)
             {
                 PrintSpinners(ref counter);
-                if (task == null && valueTask == null && time > 0 && stopwatch.Elapsed.Seconds >= time) Stop();
+                if (time > 0 && stopwatch.Elapsed.Seconds >= time) Stop();
                 await Task.Delay(TimeSpan.FromSeconds(delay ?? 0));
             }
 
@@ -117,25 +102,72 @@ public class ConsoleSpinner
         finally
         {
 
-            if (OperatingSystem.IsWindows())
-                Console.CursorVisible = cursorVisibility;
-
-            Console.ResetColor();
+            Reset(cursorVisibility);
         }
     }
 
-    private bool? TaskCompleted()
+
+    public async Task Start(Task task)
     {
-        var taskCompleted = task?.IsCompleted;
-        var valueTaskCompleted = valueTask?.IsCompleted;
+        if (active || task is null)
+            return;
 
-        if (taskCompleted != null && valueTaskCompleted != null)
+        bool cursorVisibility = OperatingSystem.IsWindows() ? Console.CursorVisible : true;
+
+        try
         {
-            return (bool)taskCompleted && (bool)taskCompleted;
-        }
+            int counter = -1;
 
-        return taskCompleted ?? valueTaskCompleted;
+            if (OperatingSystem.IsWindows())
+                Console.CursorVisible = false;
+
+            Console.ForegroundColor = color;
+            while (!task.IsCompleted)
+            {
+                PrintSpinners(ref counter);
+                await Task.Delay(TimeSpan.FromSeconds(delay ?? 0));
+            }
+
+
+        }
+        finally
+        {
+
+            Reset(cursorVisibility);
+        }
     }
+
+    public async Task Start(ValueTask task)
+    {
+        if (active)
+            return;
+
+        bool cursorVisibility = OperatingSystem.IsWindows() ? Console.CursorVisible : true;
+
+        try
+        {
+            int counter = -1;
+
+            if (OperatingSystem.IsWindows())
+                Console.CursorVisible = false;
+
+            Console.ForegroundColor = color;
+            while (!task.IsCompleted)
+            {
+                PrintSpinners(ref counter);
+                await Task.Delay(TimeSpan.FromSeconds(delay ?? 0));
+            }
+
+
+        }
+        finally
+        {
+            Reset(cursorVisibility);
+        }
+    }
+
+    
+
     private void PrintSpinners(ref int counter)
     {
         counter++;
@@ -149,14 +181,20 @@ public class ConsoleSpinner
         }
 
     }
+
+    private void Reset(bool cursorVisibility)
+    {
+        if (OperatingSystem.IsWindows())
+            Console.CursorVisible = cursorVisibility;
+
+        Stop();
+        
+    }
     private void Stop()
     {
         this.active = false;
-        this.time = null;
-        this.delay = null;
-        this.task = null;
-        this.valueTask = null;
-        this.color = ConsoleColor.White;
+        Console.ResetColor();
+        stopwatch.Reset();
     }
     private void LoadSpinners()
     {

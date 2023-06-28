@@ -29,3 +29,7 @@ Ball,o    , o   ,  o  ,   o ,    o,   o ,  o  , o   , o
 Plus,+,x
 Crocodiles,v,<,^,>
 Circle,/,-,\,|
+WorkingDots,Working.  ,Working.. ,Working...,Working   ,             
+WorkingCircle,Working /,Working -,Working \,Working |
+LoadingDots,Loading.  ,Loading.. ,Loading...,Loading   ,             
+LoadingCircle,Loading /,Loading -,Loading \,Loading |

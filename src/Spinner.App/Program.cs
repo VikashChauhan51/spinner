@@ -7,7 +7,7 @@ await Demo();
 
 static void DoWork()
 {
-    for (int i = 0; i < 25; i++)
+    for (int i = 0; i < 5; i++)
     {
         Thread.Sleep(100);
     }
@@ -19,36 +19,40 @@ static async ValueTask DoIt()
 
 static async Task DoTask()
 {
-    for (int i = 0; i < 30; i++)
+    for (int i = 0; i < 10; i++)
     {
         await Task.Delay(100);
 
     }
 }
 
-static async Task Spin(SpinnerTypes type, int time)
+static async Task Spin(SpinnerTypes type, ConsoleColor color, int time)
 {
     System.Console.WriteLine(type.ToString());
-    await new ConsoleSpinner(type).SetColor(ConsoleColor.Magenta).SetTimeoutSeconds(time).SetDelaySeconds(1).Start();
+    await new ConsoleSpinner(type).SetColor(color).SetTimeoutSeconds(time).SetDelaySeconds(1).Start();
     System.Console.Clear();
     System.Console.WriteLine();
 }
 static async Task Demo()
 {
-    await new ConsoleSpinner(SpinnerTypes.Classic, ConsoleColor.Cyan)
-        .SetDoWork(DoIt())
-        .SetDoWork(DoTask())
-        .Start();
-
-    await new ConsoleSpinner(SpinnerTypes.Classic, ConsoleColor.Yellow)
-        .SetDoWork(DoTask())
-        .Start();
+    var task1 = DoIt();
+    var task2 = DoTask();
+    await new ConsoleSpinner(SpinnerTypes.Flippie, ConsoleColor.Cyan)
+        .Start(task2);
 
     Console.Clear();
-    Console.WriteLine();
+    var task3 = DoTask();
+    await new ConsoleSpinner(SpinnerTypes.Loading, ConsoleColor.Yellow)
+        .Start(task3);
 
-    await Spin(SpinnerTypes.Dots2, 4);
-    await Spin(SpinnerTypes.Plus, 4);
-    await Spin(SpinnerTypes.Circle, 10);
-    await Spin(SpinnerTypes.Money, 10);
+    Console.Clear();
+
+    await Spin(SpinnerTypes.Classic, ConsoleColor.Yellow, 10);
+    await Spin(SpinnerTypes.Dots2, ConsoleColor.Yellow, 10);
+    await Spin(SpinnerTypes.Plus, ConsoleColor.Cyan, 5);
+    await Spin(SpinnerTypes.Circle, ConsoleColor.Magenta, 5);
+    await Spin(SpinnerTypes.Money, ConsoleColor.DarkGray, 5);
+
+    await Spin(SpinnerTypes.LoadingCircle, ConsoleColor.DarkGray, 15);
+    await Spin(SpinnerTypes.LoadingDots, ConsoleColor.DarkGray, 15);
 }
