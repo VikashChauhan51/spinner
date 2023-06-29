@@ -1,7 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Spinner;
 
-await ConsoleSpinner.Default.Start();
+await ConsoleSpinner.Default.Start(5);
 
 await Demo();
 
@@ -29,7 +29,7 @@ static async Task DoTask()
 static async Task Spin(SpinnerTypes type, ConsoleColor color, int time)
 {
     System.Console.WriteLine(type.ToString());
-    await new ConsoleSpinner(type).SetColor(color).SetTimeoutSeconds(time).SetDelaySeconds(1).Start();
+    await new ConsoleSpinner(type).SetColor(color).SetDelaySeconds(1).Start(time);
     System.Console.Clear();
     System.Console.WriteLine();
 }

@@ -3,13 +3,10 @@
 namespace Spinner;
 public class ConsoleSpinner
 {
-
-    private const int DefaultTime = 5;
     private const double DefaultDelay = 0.25;
     private Spinner spinner;
-    private int? time;
     private double? delay;
-    private bool active = false;
+    private bool active;
     private ConsoleColor color;
     private readonly List<Spinner> spinners = new List<Spinner>();
     private readonly Stopwatch stopwatch = new Lazy<Stopwatch>(() => new Stopwatch()).Value;
@@ -22,9 +19,8 @@ public class ConsoleSpinner
         get { return DefaultSpinner.Value; }
     }
 
-    public ConsoleSpinner(SpinnerTypes spinnerType, ConsoleColor color, int? time, double? delay)
+    public ConsoleSpinner(SpinnerTypes spinnerType, ConsoleColor color, double? delay)
     {
-        this.time = time;
         this.delay = delay;
         this.color = color;
         LoadSpinners();
@@ -32,29 +28,23 @@ public class ConsoleSpinner
 
     }
 
-    public ConsoleSpinner() : this(SpinnerTypes.Circle, ConsoleColor.White, DefaultTime, DefaultDelay)
+    public ConsoleSpinner() : this(SpinnerTypes.Circle, ConsoleColor.White, DefaultDelay)
     {
 
     }
 
-    public ConsoleSpinner(SpinnerTypes spinnerType) : this(spinnerType, ConsoleColor.White, DefaultTime, DefaultDelay)
+    public ConsoleSpinner(SpinnerTypes spinnerType) : this(spinnerType, ConsoleColor.White, DefaultDelay)
     {
 
     }
 
-    public ConsoleSpinner(SpinnerTypes spinnerType, ConsoleColor color) : this(spinnerType, color, DefaultTime, DefaultDelay)
+    public ConsoleSpinner(SpinnerTypes spinnerType, ConsoleColor color) : this(spinnerType, color, DefaultDelay)
     {
 
     }
     public ConsoleSpinner SetDelaySeconds(double delay)
     {
         this.delay = delay;
-        return this;
-    }
-
-    public ConsoleSpinner SetTimeoutSeconds(int time)
-    {
-        this.time = time;
         return this;
     }
 
@@ -71,7 +61,7 @@ public class ConsoleSpinner
     }
 
 
-    public async Task Start()
+    public async Task Start(int timeout)
     {
         if (active)
             return;
@@ -84,7 +74,7 @@ public class ConsoleSpinner
             active = true;
             int counter = -1;
 
-            if (time > 0) stopwatch.Start();
+            if (timeout > 0) stopwatch.Start();
 
             if (OperatingSystem.IsWindows())
                 Console.CursorVisible = false;
@@ -93,7 +83,7 @@ public class ConsoleSpinner
             while (active)
             {
                 PrintSpinners(ref counter);
-                if (time > 0 && stopwatch.Elapsed.Seconds >= time) Stop();
+                if (timeout > 0 && stopwatch.Elapsed.Seconds >= timeout) Stop();
                 await Task.Delay(TimeSpan.FromSeconds(delay ?? 0));
             }
 
