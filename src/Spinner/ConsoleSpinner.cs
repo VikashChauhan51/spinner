@@ -188,13 +188,13 @@ public class ConsoleSpinner
     }
     private void LoadSpinners()
     {
-        var spinnersText = Resource.spinners;
+        var spinnersText = SpinnerResources.spinners;
         var lines = spinnersText.Split(new[] { Environment.NewLine }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
         foreach (var line in lines.Where(l => !string.IsNullOrWhiteSpace(l)))
         {
             var splitByComma = line.Split(',');
-            spinners.Add(new Spinner((SpinnerTypes)Enum.Parse(typeof(SpinnerTypes), splitByComma[0], true), splitByComma.ToList().Skip(1).ToArray()));
+            this.spinners.Add(new Spinner((SpinnerTypes)Enum.Parse(typeof(SpinnerTypes), splitByComma[0], true), splitByComma.ToList().Skip(1).ToArray()));
         }
 
     }
