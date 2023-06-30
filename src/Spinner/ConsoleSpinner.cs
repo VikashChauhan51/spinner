@@ -8,25 +8,25 @@ public class ConsoleSpinner
     private double? delay;
     private bool active;
     private ConsoleColor color;
-    private readonly List<Spinner> spinners = new List<Spinner>();
+    private static List<Spinner> spinners = new List<Spinner>();
     private readonly Stopwatch stopwatch = new Lazy<Stopwatch>(() => new Stopwatch()).Value;
     private readonly object objectLock = new();
-    private static readonly Lazy<ConsoleSpinner> DefaultSpinner = new Lazy<ConsoleSpinner>(
-       () => new ConsoleSpinner());
+    private static readonly ConsoleSpinner DefaultSpinner = new ConsoleSpinner();
 
     public static ConsoleSpinner Default
     {
-        get { return DefaultSpinner.Value; }
+        get { return DefaultSpinner; }
     }
 
     static ConsoleSpinner()
-    { 
+    {
+        LoadSpinners();
     }
     public ConsoleSpinner(SpinnerTypes spinnerType, ConsoleColor color, double? delay)
     {
         this.delay = delay;
         this.color = color;
-        LoadSpinners();
+        
         this.spinner = spinners.First(x => x.Name == spinnerType);
 
     }
@@ -189,7 +189,7 @@ public class ConsoleSpinner
         Console.ResetColor();
         stopwatch.Reset();
     }
-    private void LoadSpinners()
+    private static void LoadSpinners()
     {
         var spinnersText = @"Dots,:,¨,.
 Dots2,.   ,.. ,...,   
@@ -225,14 +225,15 @@ Circle,/,-,\,|
 WorkingDots,Working.  ,Working.. ,Working...,Working   ,             
 WorkingCircle,Working /,Working -,Working \,Working |
 LoadingDots,Loading.  ,Loading.. ,Loading...,Loading   ,             
-LoadingCircle,Loading /,Loading -,Loading \,Loading |";
+LoadingCircle,Loading /,Loading -,Loading \,Loading |
+";
 
         var lines = spinnersText.Split(new[] { Environment.NewLine }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
         foreach (var line in lines.Where(l => !string.IsNullOrWhiteSpace(l)))
         {
             var splitByComma = line.Split(',');
-            this.spinners.Add(new Spinner((SpinnerTypes)Enum.Parse(typeof(SpinnerTypes), splitByComma[0], true), splitByComma.ToList().Skip(1).ToArray()));
+            spinners.Add(new Spinner((SpinnerTypes)Enum.Parse(typeof(SpinnerTypes), splitByComma[0], true), splitByComma.ToList().Skip(1).ToArray()));
         }
 
     }

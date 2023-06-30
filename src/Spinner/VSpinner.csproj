@@ -4,15 +4,15 @@
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <VersionPrefix>1.0.2</VersionPrefix>
+    <VersionPrefix>1.0.3</VersionPrefix>
     <SignAssembly>True</SignAssembly>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>VSpinner a console spinner</Title>
     <Description>The VSpinner is a console spinner or loader  for console applications.</Description>
-    <PackageProjectUrl>https://github.com/VikashChauhan51/figlet-ascii-art</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/VikashChauhan51/spinner</PackageProjectUrl>
     <Authors>VikashChauhan51</Authors>
     <Copyright>Copyright © VikashChauhan51, 2023</Copyright>
-    <RepositoryUrl>https://github.com/VikashChauhan51/figlet-ascii-art</RepositoryUrl>
+    <RepositoryUrl>https://github.com/VikashChauhan51/spinner</RepositoryUrl>
     <PackageTags>command-line;command-line-spinner;console-spinner;console;console-loader;command-line-spinner;spinner;loader </PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <AssemblyOriginatorKeyFile>..\VSpinner.snk</AssemblyOriginatorKeyFile>
