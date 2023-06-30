@@ -1,4 +1,4 @@
-﻿namespace Spinner;
+﻿namespace VSpinner;
 public enum SpinnerTypes
 {
     Dots,

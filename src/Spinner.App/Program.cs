@@ -1,5 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using Spinner;
+using VSpinner;
 
 await ConsoleSpinner.Default.Start(5);
 

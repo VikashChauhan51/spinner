@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Spinner;
+namespace VSpinner;
 public class ConsoleSpinner
 {
     private const double DefaultDelay = 0.25;
