@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace VSpinner;
 public class ConsoleSpinner
@@ -9,7 +10,7 @@ public class ConsoleSpinner
     private bool active;
     private ConsoleColor color;
     private static List<Spinner> spinners = new List<Spinner>();
-    private readonly Stopwatch stopwatch = new Lazy<Stopwatch>(() => new Stopwatch()).Value;
+    private readonly Stopwatch stopwatch = new Stopwatch();
     private readonly object objectLock = new();
     private static readonly ConsoleSpinner DefaultSpinner = new ConsoleSpinner();
 
@@ -21,29 +22,61 @@ public class ConsoleSpinner
     static ConsoleSpinner()
     {
         LoadSpinners();
+
+        if (spinners.Count == 0)
+        {
+            throw new ArgumentException(nameof(spinners));
+        }
+
     }
     public ConsoleSpinner(SpinnerTypes spinnerType, ConsoleColor color, double? delay)
     {
         this.delay = delay;
         this.color = color;
-        
-        this.spinner = spinners.First(x => x.Name == spinnerType);
+
+        if (spinners.Count == 0)
+        {
+            throw new ArgumentException(nameof(spinners));
+        }
+
+        this.spinner = spinners.FirstOrDefault(x => x.Name == spinnerType) ?? throw new KeyNotFoundException(nameof(spinnerType));
 
     }
 
-    public ConsoleSpinner() : this(SpinnerTypes.Circle, ConsoleColor.White, DefaultDelay)
+    public ConsoleSpinner()
     {
+        this.delay = DefaultDelay;
+        this.color = ConsoleColor.White;
+        if (spinners.Count == 0)
+        {
+            throw new ArgumentException(nameof(spinners));
+        }
 
+        this.spinner = spinners.FirstOrDefault(x => x.Name == SpinnerTypes.Classic) ?? throw new KeyNotFoundException(nameof(SpinnerTypes.Classic));
     }
 
-    public ConsoleSpinner(SpinnerTypes spinnerType) : this(spinnerType, ConsoleColor.White, DefaultDelay)
+    public ConsoleSpinner(SpinnerTypes spinnerType)
     {
+        this.delay = DefaultDelay;
+        this.color = ConsoleColor.White;
+        if (spinners.Count == 0)
+        {
+            throw new ArgumentException(nameof(spinners));
+        }
 
+        this.spinner = spinners.FirstOrDefault(x => x.Name == spinnerType) ?? throw new KeyNotFoundException(nameof(spinnerType));
     }
 
     public ConsoleSpinner(SpinnerTypes spinnerType, ConsoleColor color) : this(spinnerType, color, DefaultDelay)
     {
+        this.delay = DefaultDelay;
+        this.color = color;
+        if (spinners.Count == 0)
+        {
+            throw new ArgumentException(nameof(spinners));
+        }
 
+        this.spinner = spinners.FirstOrDefault(x => x.Name == spinnerType) ?? throw new KeyNotFoundException(nameof(spinnerType));
     }
     public ConsoleSpinner SetDelaySeconds(double delay)
     {
@@ -159,7 +192,7 @@ public class ConsoleSpinner
         }
     }
 
-    
+
 
     private void PrintSpinners(ref int counter)
     {
@@ -181,7 +214,7 @@ public class ConsoleSpinner
             Console.CursorVisible = cursorVisibility;
 
         Stop();
-        
+
     }
     private void Stop()
     {
