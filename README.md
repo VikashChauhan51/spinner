@@ -1,7 +1,7 @@
 # Spinner
 Console spinners with simple and minimal api
 
-![ConsoleSpinner](https://github.com/VikashChauhan51/spinner/assets/14816038/fa73bacd-4866-40a4-9a91-a5197cb6b939)
+<img src="https://user-images.githubusercontent.com/14816038/250144817-fa73bacd-4866-40a4-9a91-a5197cb6b939.gif" width="500" height="500"/>
 
 ## Quick Start Example
 
