@@ -23,7 +23,6 @@ public enum SpinnerTypes
     Brackets,
     Pulse,
     HashFest,
-    Matrix,
     Flippie,
     Loading,
     Unspecified,
