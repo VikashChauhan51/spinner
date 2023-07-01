@@ -1,5 +1,5 @@
 # VSpinner
-Console spinners with simple and minimal api.
+The [VSpinner](https://www.nuget.org/packages/VSpinner) is a console spinners with simple and minimal api.
 
 <img src="https://user-images.githubusercontent.com/14816038/250144817-fa73bacd-4866-40a4-9a91-a5197cb6b939.gif" width="500" height="500"/>
 
